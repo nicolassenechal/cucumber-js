@@ -66,7 +66,7 @@ describe("Cucumber.Cli.ArgumentParser", function () {
 
     it("defines a --format option to specify the format", function () {
       var knownOptionDefinitions = argumentParser.getKnownOptionDefinitions();
-      expect(knownOptionDefinitions[Cucumber.Cli.ArgumentParser.FORMAT_OPTION_NAME]).toEqual(String);
+      expect(knownOptionDefinitions[Cucumber.Cli.ArgumentParser.FORMAT_OPTION_NAME]).toEqual([String, Array]);
     });
 
     it("defines a --report flag", function () {
@@ -290,21 +290,20 @@ describe("Cucumber.Cli.ArgumentParser", function () {
     });
   });
 
-  describe("getFormat()", function () {
+  describe("getFormats()", function () {
     var format;
 
     beforeEach(function () {
-      format = createSpy("format");
-      spyOn(argumentParser, 'getOptionOrDefault').andReturn(format);
+      spyOn(argumentParser, 'getOptionOrDefault').andReturn('pretty,json');
     });
 
     it("gets the format option value", function () {
-      argumentParser.getFormat();
+      argumentParser.getFormats();
       expect(argumentParser.getOptionOrDefault).toHaveBeenCalledWith(Cucumber.Cli.ArgumentParser.FORMAT_OPTION_NAME, 'progress');
     });
 
-    it("returns the format", function () {
-      expect(argumentParser.getFormat()).toBe(format);
+    it("returns the formats", function () {
+      expect(argumentParser.getFormats()).toEqual(['pretty', 'json']);
     });
   });
 

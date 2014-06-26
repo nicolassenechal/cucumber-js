@@ -113,7 +113,7 @@ describe("Cucumber.Cli", function() {
 
     beforeEach(function() {
       formatter     = createSpy("formatter");
-      configuration = createSpyWithStubs("CLI configuration", {getFormatter: formatter});
+      configuration = createSpyWithStubs("CLI configuration", {getFormatters: [formatter]});
       runtime       = createSpyWithStubs("runtime", {start: null, attachListener: null});
       callback      = createSpy("callback");
       spyOn(Cucumber, 'Runtime').andReturn(runtime);
@@ -126,7 +126,7 @@ describe("Cucumber.Cli", function() {
 
     it("gets the formatter from the configuration", function() {
       cli.runSuiteWithConfiguration(configuration, callback);
-      expect(configuration.getFormatter).toHaveBeenCalled();
+      expect(configuration.getFormatters).toHaveBeenCalled();
     });
 
     it("attaches the formatter to the runtime", function() {

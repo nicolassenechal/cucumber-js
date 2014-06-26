@@ -28,13 +28,13 @@ describe("Cucumber.Cli.Configuration", function () {
     });
   });
 
-  describe("getFormatter()", function () {
+  describe("getFormatters()", function () {
     var shouldSnippetsBeInCoffeeScript, formatterOptions;
 
     beforeEach(function () {
       shouldSnippetsBeInCoffeeScript = createSpy("should snippets be in CS?");
       formatterOptions               = {coffeeScriptSnippets: shouldSnippetsBeInCoffeeScript};
-      spyOnStub(argumentParser, 'getFormat').andReturn("progress");
+      spyOnStub(argumentParser, 'getFormats').andReturn(["progress"]);
       spyOnStub(argumentParser, 'shouldSnippetsBeInCoffeeScript').andReturn(shouldSnippetsBeInCoffeeScript);
       spyOn(Cucumber.Listener, 'JsonFormatter');
       spyOn(Cucumber.Listener, 'ProgressFormatter');
@@ -43,12 +43,12 @@ describe("Cucumber.Cli.Configuration", function () {
     });
 
     it("gets the formatter name from the argument parser", function () {
-      configuration.getFormatter();
-      expect(argumentParser.getFormat).toHaveBeenCalled();
+      configuration.getFormatters();
+      expect(argumentParser.getFormats).toHaveBeenCalled();
     });
 
     it("checks whether the step definition snippets should be in CoffeeScript", function () {
-      configuration.getFormatter();
+      configuration.getFormatters();
       expect(argumentParser.shouldSnippetsBeInCoffeeScript).toHaveBeenCalled();
     });
 
@@ -56,18 +56,18 @@ describe("Cucumber.Cli.Configuration", function () {
       var formatter;
 
       beforeEach(function () {
-        argumentParser.getFormat.andReturn("json");
+        argumentParser.getFormats.andReturn(["json"]);
         formatter = createSpy("formatter");
         Cucumber.Listener.JsonFormatter.andReturn(formatter);
       });
 
       it("creates a new progress formatter", function () {
-        configuration.getFormatter();
+        configuration.getFormatters();
         expect(Cucumber.Listener.JsonFormatter).toHaveBeenCalledWith(formatterOptions);
       });
 
       it("returns the progress formatter", function () {
-        expect(configuration.getFormatter()).toBe(formatter);
+        expect(configuration.getFormatters()).toEqual([formatter]);
       });
     });
 
@@ -75,18 +75,18 @@ describe("Cucumber.Cli.Configuration", function () {
       var formatter;
 
       beforeEach(function () {
-        argumentParser.getFormat.andReturn("progress");
+        argumentParser.getFormats.andReturn(["progress"]);
         formatter = createSpy("formatter");
         Cucumber.Listener.ProgressFormatter.andReturn(formatter);
       });
 
       it("creates a new progress formatter", function () {
-        configuration.getFormatter();
+        configuration.getFormatters();
         expect(Cucumber.Listener.ProgressFormatter).toHaveBeenCalledWith(formatterOptions);
       });
 
       it("returns the progress formatter", function () {
-        expect(configuration.getFormatter()).toBe(formatter);
+        expect(configuration.getFormatters()).toEqual([formatter]);
       });
     });
 
@@ -94,18 +94,18 @@ describe("Cucumber.Cli.Configuration", function () {
       var formatter;
 
       beforeEach(function () {
-        argumentParser.getFormat.andReturn("pretty");
+        argumentParser.getFormats.andReturn(["pretty"]);
         formatter = createSpy("formatter");
         Cucumber.Listener.PrettyFormatter.andReturn(formatter);
       });
 
       it("creates a new pretty formatter", function () {
-        configuration.getFormatter();
+        configuration.getFormatters();
         expect(Cucumber.Listener.PrettyFormatter).toHaveBeenCalledWith(formatterOptions);
       });
 
       it("returns the pretty formatter", function () {
-        expect(configuration.getFormatter()).toBe(formatter);
+        expect(configuration.getFormatters()).toEqual([formatter]);
       });
     });
 
@@ -113,18 +113,18 @@ describe("Cucumber.Cli.Configuration", function () {
       var formatter;
 
       beforeEach(function () {
-        argumentParser.getFormat.andReturn("summary");
+        argumentParser.getFormats.andReturn(["summary"]);
         formatter = createSpy("formatter");
         Cucumber.Listener.SummaryFormatter.andReturn(formatter);
       });
 
       it("creates a new summary formatter", function () {
-        configuration.getFormatter();
+        configuration.getFormatters();
         expect(Cucumber.Listener.SummaryFormatter).toHaveBeenCalledWith(formatterOptions);
       });
 
       it("returns the summary formatter", function () {
-        expect(configuration.getFormatter()).toBe(formatter);
+        expect(configuration.getFormatters()).toEqual([formatter]);
       });
     });
 
@@ -132,13 +132,40 @@ describe("Cucumber.Cli.Configuration", function () {
       var formatter;
 
       beforeEach(function () {
-        argumentParser.getFormat.andReturn("blah");
+        argumentParser.getFormats.andReturn("blah");
       });
 
       it("throws an exceptions", function () {
-        expect(configuration.getFormatter).toThrow();
+        expect(configuration.getFormatters).toThrow();
       });
     });
+
+    describe("when there are several formatter", function () {
+      var formatter1, formatter2;
+
+      beforeEach(function () {
+        argumentParser.getFormats.andReturn(["summary", "json"]);
+        formatter1 = createSpy("formatter1");
+        Cucumber.Listener.SummaryFormatter.andReturn(formatter1);
+        formatter2 = createSpy("formatter2");
+        Cucumber.Listener.JsonFormatter.andReturn(formatter2);
+      });
+
+      it("creates a new summary formatter", function () {
+        configuration.getFormatters();
+        expect(Cucumber.Listener.SummaryFormatter).toHaveBeenCalledWith(formatterOptions);
+      });
+
+        it("creates a new json formatter", function () {
+            configuration.getFormatters();
+            expect(Cucumber.Listener.JsonFormatter).toHaveBeenCalledWith(formatterOptions);
+        });
+
+      it("returns all the formatters", function () {
+        expect(configuration.getFormatters()).toEqual([formatter1, formatter2]);
+      });
+    });
+
   });
 
 
