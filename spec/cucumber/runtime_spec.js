@@ -74,39 +74,6 @@ describe("Cucumber.Runtime", function() {
     });
   });
 
-  describe("finish()", function () {
-    var result, callback, formatter, logs;
-
-    beforeEach(function () {
-      result = createSpy("AST tree walker result");
-      callback = createSpy("callback");
-      formatter = createSpy("formatter");
-      logs = createSpy("formatter logs");
-      spyOnStub(listeners, "getLast").andReturn(formatter);
-      spyOnStub(formatter, "getLogs").andReturn(logs);
-      spyOn(fs, "writeFileSync");
-      spyOn(runtime, "getCallback").andReturn(callback);
-    });
-
-    it("calls the callback", function() {
-      spyOnStub(configuration, "getReportFile").andReturn(null);
-      runtime.finish(result);
-      expect(callback).toHaveBeenCalled();
-    });
-
-    it("does write to output to file", function () {
-      spyOnStub(configuration, "getReportFile").andReturn("reportFile");
-      runtime.finish(result);
-      expect(fs.writeFileSync).toHaveBeenCalledWith("reportFile", logs, { flag: "w" });
-    });
-
-    it("does not write to output to file if not specified", function () {
-      spyOnStub(configuration, "getReportFile").andReturn(null);
-      runtime.finish(result);
-      expect(fs.writeFileSync).not.toHaveBeenCalled();
-    });
-  });
-
   describe("getCallback() [setCallback()]", function() {
     var callback;
 

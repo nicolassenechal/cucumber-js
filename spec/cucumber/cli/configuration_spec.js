@@ -29,13 +29,18 @@ describe("Cucumber.Cli.Configuration", function () {
   });
 
   describe("getFormatters()", function () {
-    var shouldSnippetsBeInCoffeeScript, formatterOptions;
+    var shouldSnippetsBeInCoffeeScript, formatterOptions, getReportFile;
 
     beforeEach(function () {
       shouldSnippetsBeInCoffeeScript = createSpy("should snippets be in CS?");
-      formatterOptions               = {coffeeScriptSnippets: shouldSnippetsBeInCoffeeScript};
+      getReportFile = createSpy("get report file");
+      formatterOptions = {
+        coffeeScriptSnippets: shouldSnippetsBeInCoffeeScript,
+        reportFile: getReportFile
+      };
       spyOnStub(argumentParser, 'getFormats').andReturn(["progress"]);
       spyOnStub(argumentParser, 'shouldSnippetsBeInCoffeeScript').andReturn(shouldSnippetsBeInCoffeeScript);
+      spyOnStub(argumentParser, 'getReportFile').andReturn(getReportFile);
       spyOn(Cucumber.Listener, 'JsonFormatter');
       spyOn(Cucumber.Listener, 'ProgressFormatter');
       spyOn(Cucumber.Listener, 'PrettyFormatter');
